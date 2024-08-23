@@ -21,7 +21,8 @@ class OrderController extends Controller
             $data = DB::table('order')
                 ->select(
                     'order.*',
-                    'pembeli.name as pembeli'
+                    'pembeli.name as pembeli',
+                    'order.foto as bukti_pembayaran' // Tambahkan kolom foto
                 )
                 ->join('order_detail', 'order_detail.order_id', '=', 'order.id')
                 ->join('products', 'products.id', '=', 'order_detail.product_id')
@@ -31,7 +32,6 @@ class OrderController extends Controller
                 ->distinct('order.id')
                 ->get();
 
-
             return datatables()->of($data)
                 ->editColumn('created_at', function ($data) {
                     return Carbon::createFromFormat('Y-m-d H:i:s', $data->created_at)->format('d-m-Y');
@@ -39,8 +39,14 @@ class OrderController extends Controller
                 ->editColumn('total_price', function ($data) {
                     return number_format($data->total_price, 0, '.', '.');
                 })
+                ->addColumn('bukti_pembayaran', function ($data) {
+                    if ($data->bukti_pembayaran) {
+                        return '<img src="' . asset('storage/' . $data->bukti_pembayaran) . '" alt="Bukti Pembayaran" width="100">';
+                    } else {
+                        return 'Belum upload bukti';
+                    }
+                })
                 ->addColumn('aksi', function ($data) {
-
                     if ($data->status == 'sudah dikonfirmasi') {
                         return '-';
                     } else {
@@ -57,28 +63,51 @@ class OrderController extends Controller
                     }
                 })
                 ->addIndexColumn()
-                ->rawColumns(['aksi'])
+                ->rawColumns(['aksi', 'bukti_pembayaran']) // Tambahkan kolom bukti_pembayaran
                 ->toJson();
         }
     }
 
 
+
     public function uploadBuktiPembayaran(Request $request)
     {
-        $order = DB::table('order')->where('id', $request->id)
+        // Validasi file
+        $request->validate([
+            'foto' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'id' => 'required|integer|exists:order,id',
+        ]);
+
+        // Ambil file dari request
+        $file = $request->file('foto');
+
+        // Simpan file dan ambil nama file
+        $path = $file->store('assets/foto-bukti-pembayaran-order', 'public');
+
+        // Update database
+        $updated = DB::table('order')
+            ->where('id', $request->id)
             ->update([
-                'foto' => $request->file('foto')->store('assets/foto-bukti-pembayaran-order', 'public'),
-                'status' => 'Menunggu proses'
+                'foto' => $path,
+                'status' => 'pending'
             ]);
 
-        if ($order) {
+        // Cek hasil update
+        if ($updated) {
             return response()->json([
                 'status' => 'success',
                 'message' => 'Data disimpan',
                 'title' => 'Berhasil'
             ]);
+        } else {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Gagal menyimpan data',
+                'title' => 'Gagal'
+            ]);
         }
     }
+
 
 
     public function detailOrder(Request $request)

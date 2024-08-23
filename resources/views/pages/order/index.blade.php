@@ -22,13 +22,13 @@
                             <table class="table table-bordered" style="width:100%" id="table">
                                 <thead>
                                     <tr>
-                                        <th>No</th>
-                                        <th>Tanggal</th>
-                                        <th>Pembeli</th>
-                                        <th>Status</th>
-                                        <th>Tagihan</th>
-                                        {{-- <th>Bukti Pembayaran</th> --}}
-                                        <th>Aksi</th>
+                                        <<th>No</th>
+                                            <th>Tanggal</th>
+                                            <th>Pembeli</th>
+                                            <th>Status</th>
+                                            <th>Tagihan</th>
+                                            <th>Bukti Pembayaran</th>
+                                            <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -55,13 +55,11 @@
                 [10, 20, 25, -1],
                 [10, 20, 25, "50"]
             ],
-
             order: [],
             ajax: {
                 url: "{{ route('order.data') }}",
             },
-            columns: [
-                {
+            columns: [{
                     data: 'DT_RowIndex',
                     'orderable': false,
                     'searchable': false
@@ -82,25 +80,20 @@
                     data: 'total_price',
                     name: 'total_price'
                 },
-                // {
-                //     data: 'bukti_pembayaran',
-                //     name: 'bukti_pembayaran',
-                //     render: function(data, type, row) {
-                //         // Check if the bukti pembayaran exists
-                //         if(data) {
-                //             // Render an image or a link to view the image
-                //             return '<img src="' +  "{{ asset('storage/app/public/assets/foto-bukti-pembayaran-order') }}" data + '" alt="Bukti Pembayaran" width="100" class="img-fluid">';
-                //         } else {
-                //             return 'Belum upload bukti';
-                //         }
-                //     }
-                // },
+                {
+                    data: 'bukti_pembayaran', // Tambahkan kolom bukti_pembayaran
+                    name: 'bukti_pembayaran',
+                    render: function(data, type, row) {
+                        return data; // Data sudah berisi HTML tag img
+                    }
+                },
                 {
                     data: 'aksi',
                     name: 'aksi'
                 },
             ]
         });
+
 
         $(document).on('click', '#konfirmasi', function() {
             let id = $(this).attr('data-id');

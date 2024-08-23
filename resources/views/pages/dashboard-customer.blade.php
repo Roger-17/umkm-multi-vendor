@@ -59,7 +59,8 @@
                             <tbody>
                                 <tr>
                                     <td style="text-align: center;">
-                                        <img src="{{ asset('assets/images/payment-icon/Yumeuli.png') }}" alt="Deskripsi Gambar" width="300">
+                                        <img src="{{ asset('assets/images/payment-icon/Yumeuli.png') }}"
+                                            alt="Deskripsi Gambar" width="300">
                                     </td>
                                 </tr>
                             </tbody>
@@ -127,14 +128,11 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title px-2 my-3" id="staticBackdropLabel">Form Bukti Pembayaran</h5>
-
                 </div>
                 <div class="modal-body">
-                    <form action="#" id="form_simpan" method="POST">
+                    <form id="form_simpan" method="POST" enctype="multipart/form-data">
                         @csrf
-
                         <input type="hidden" name="id" class="form-control" id="id_order">
-
                         <div class="form-group">
                             <label for="">Bukti Pembayaran:</label>
                             <input type="file" class="form-control" name="foto">
@@ -143,9 +141,7 @@
                 <div class="modal-footer">
                     <button type="submit" class="btn btn-primary">Upload</button>
                 </div>
-
                 </form>
-
             </div>
         </div>
     </div>
@@ -216,7 +212,7 @@
 
         });
 
-        $(document).on('click', '#tutupDetail', function(){
+        $(document).on('click', '#tutupDetail', function() {
             $('#content').empty();
         });
 
@@ -228,7 +224,7 @@
                 var formData = new FormData($(this)[0]);
                 $.ajax({
                     url: '{{ route('uploadBuktiPembayaran') }}',
-                    method: 'post',
+                    method: 'POST',
                     data: formData,
                     cache: false,
                     processData: false,

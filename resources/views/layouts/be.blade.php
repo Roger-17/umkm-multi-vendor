@@ -8,6 +8,9 @@
 
     @include('includes.admin.style')
 
+    {{-- Grafik --}}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Start GA -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-94034622-3"></script>
     <script>
